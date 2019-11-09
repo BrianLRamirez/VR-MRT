@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 
 public class GameManager : MonoBehaviour{
@@ -12,20 +13,27 @@ public class GameManager : MonoBehaviour{
     Vector3 originLeft = new Vector3(1.14f,1.3f,1.84f);
     Vector3 originRight= new Vector3(1.14f,1.3f,-2.5f);
 
+    GameObject debugger;
+
+    float thumbstickX;
+    float thumbstickY;
+
     void Start(){
+        debugger = GameObject.Find("Debugger");
         loadNewPuzzle();
     }
 
     // Update is called once per frame
     void Update(){
-        float thumbstickX = OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick).x;
-        float thumbstickY = OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick).y;
+        thumbstickX = OVRInput.Get(OVRInput.Axis2D.SecondaryThumbstick).x;
+        thumbstickY = OVRInput.Get(OVRInput.Axis2D.SecondaryThumbstick).y;
+        updateDebugger();
         
-        // if(OVRInput.Get(OVRInput.Button.PrimaryThumbstickUp) || OVRInput.Get(OVRInput.Button.PrimaryThumbstickDown)){
-            // go.transform.Rotate(0, 0, (thumbstickY * 3));
-        // } else {
-            // box.transform.Rotate(0, (thumbstickX * 3), 0);
-        // }
+        if(OVRInput.Get(OVRInput.Button.One)){
+        //    Do something
+        } else if (OVRInput.Get(OVRInput.Button.Two)){
+        //    Do something else
+        }
     }
 
     void loadNewPuzzle(){
@@ -34,4 +42,14 @@ public class GameManager : MonoBehaviour{
         puzzleRight =  GameObject.Instantiate(puzzleModel, originRight, transform.rotation);
         currentPuzzle++;
     }
+
+    void updateDebugger(){
+        TextMeshPro debuggerText = GameObject.Find("DebuggerText").GetComponent<TextMeshPro>();;
+        string debugText = "Thumbstick Data: \n" + 
+                            "<#00ff00>X: " + thumbstickX + "</color>\n" + 
+                            "<#3498db>Y: " + thumbstickY + "</color>\n";
+        debuggerText.SetText(debugText);
+    }
+
+
 }
