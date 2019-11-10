@@ -9,9 +9,9 @@ public class GameManager : MonoBehaviour{
     public GameObject puzzleLeft;
     public GameObject puzzleRight;
     string[] puzzleList = {"puzzle1","puzzle2", "puzzle3"}; 
-    int currentPuzzle = 1;
-    Vector3 originLeft = new Vector3(1.14f,1.3f,1.84f);
-    Vector3 originRight= new Vector3(1.14f,1.3f,-2.5f);
+    int currentPuzzle = 0;
+    Vector3 originRight = new Vector3(1.05f, 2.75f, -2.27f);
+    Vector3 originLeft= new Vector3(1.05f, 2.75f, 1.45f);
 
     GameObject debugger;
 
@@ -19,8 +19,8 @@ public class GameManager : MonoBehaviour{
     float thumbstickY;
 
     void Start(){
-        debugger = GameObject.Find("Debugger");
         loadNewPuzzle();
+        debugger = GameObject.Find("Debugger");
     }
 
     // Update is called once per frame
@@ -31,19 +31,20 @@ public class GameManager : MonoBehaviour{
 
         handleRotation();
         
-        if(OVRInput.Get(OVRInput.Button.One)){
-        //    Do something
+        if(OVRInput.GetDown(OVRInput.Button.One)){
+            loadNewPuzzle();
         } else if (OVRInput.Get(OVRInput.Button.Two)){
         //    Do something else
         }
     }
 
     void loadNewPuzzle(){
-        puzzleRight = GameObject.Find("puzzle1");
-        //Resources.Load(puzzleList[currentPuzzle]) as GameObject;
-        // puzzleLeft =  GameObject.Instantiate(puzzleModel, originLeft, transform.rotation);
-        // puzzleRight =  GameObject.Instantiate(puzzleModel, originRight, transform.rotation);
-        // currentPuzzle++;
+        Destroy(puzzleLeft);
+        Destroy(puzzleRight);
+        GameObject puzzleModel = Resources.Load(puzzleList[currentPuzzle]) as GameObject;
+        puzzleLeft =  GameObject.Instantiate(puzzleModel, originLeft, transform.rotation);
+        puzzleRight =  GameObject.Instantiate(puzzleModel, originRight, transform.rotation);
+        currentPuzzle++;
     }
 
     void updateDebugger(){
@@ -56,9 +57,9 @@ public class GameManager : MonoBehaviour{
 
      void handleRotation() {
          if(OVRInput.Get(OVRInput.Button.SecondaryThumbstickRight)|| OVRInput.Get(OVRInput.Button.SecondaryThumbstickLeft)){
-            puzzleRight.transform.localEulerAngles = new Vector3(puzzleRight.transform.localEulerAngles.x, puzzleRight.transform.localEulerAngles.y + (thumbstickX * 5), puzzleRight.transform.localEulerAngles.z);
+             puzzleRight.transform.Rotate(0, (thumbstickX * 3), 0);
          } else if (OVRInput.Get(OVRInput.Button.SecondaryThumbstickUp)|| OVRInput.Get(OVRInput.Button.SecondaryThumbstickDown)) {
-             puzzleRight.transform.Rotate((thumbstickY * 5), 0 , 0);
+             puzzleRight.transform.Rotate((thumbstickY * 3), 0 , 0);
            
          }
      }
