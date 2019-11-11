@@ -12,7 +12,7 @@ public class GameManager : MonoBehaviour{
 
     public bool isPuzzleSolved;
 
-    string[] puzzleList = {"puzzle1","puzzle2"}; 
+    string[] puzzleList = {"puzzle1","puzzle2","puzzle3","puzzle4","puzzle5"}; 
     int currentPuzzle = 0;
     Vector3 originRight = new Vector3(1.05f, 2.75f, -2.27f);
     Vector3 originLeft= new Vector3(1.05f, 2.75f, 1.45f);
@@ -44,7 +44,7 @@ public class GameManager : MonoBehaviour{
         Destroy(puzzleRight);
         GameObject puzzleModel = Resources.Load(puzzleList[currentPuzzle]) as GameObject;
         puzzleLeft =  GameObject.Instantiate(puzzleModel, originLeft, transform.rotation);
-        puzzleLeft.transform.Rotate(Random.Range(-360.0f, 360.0f), Random.Range(-360.0f, 360.0f), 0);
+        puzzleLeft.transform.Rotate(Random.Range(0f, 360.0f), Random.Range(0f, 360.0f), 0);
         puzzleRight =  GameObject.Instantiate(puzzleModel, originRight, transform.rotation);
         puzzleRight.AddComponent<Rotateable>();
         currentPuzzle++;
@@ -62,7 +62,7 @@ public class GameManager : MonoBehaviour{
     }
 
     void checkForWinningCondition(){
-        bool xMatches = isWithinTolerance(puzzleLeft.transform.rotation.x, Mathf.Abs(puzzleRight.transform.rotation.x), 0.1f);
+        bool xMatches = isWithinTolerance(puzzleLeft.transform.rotation.x, puzzleRight.transform.rotation.x, 0.1f);
         bool yMatches = isWithinTolerance(puzzleLeft.transform.rotation.y, puzzleRight.transform.rotation.y, 0.1f);
         bool zMatches = isWithinTolerance(puzzleLeft.transform.rotation.z, puzzleRight.transform.rotation.z, 0.1f);
 
@@ -73,6 +73,8 @@ public class GameManager : MonoBehaviour{
     }
 
     bool isWithinTolerance(float value, float compareTo, float tolerance){
+        value = Mathf.Abs(value);
+        compareTo = Mathf.Abs(compareTo);
         float ceiling = value + tolerance;
         float floor = value - tolerance;
 

@@ -2781,6 +2781,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   puzzleLeft: {fileID: 0}
   puzzleRight: {fileID: 0}
+  isGameOver: 0
+  isPuzzleSolved: 0
 --- !u!4 &919026552
 Transform:
   m_ObjectHideFlags: 0
