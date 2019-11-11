@@ -12,7 +12,7 @@ public class GameManager : MonoBehaviour{
 
     public bool isPuzzleSolved;
 
-    string[] puzzleList = {"puzzle1","puzzle2","puzzle3","puzzle4","puzzle5"}; 
+    string[] puzzleList = {"puzzle1","puzzle2","puzzle3","puzzle4","puzzle5", "puzzle6","puzzle7","puzzle8"}; 
     int currentPuzzle = 0;
     Vector3 originRight = new Vector3(1.05f, 2.75f, -2.27f);
     Vector3 originLeft= new Vector3(1.05f, 2.75f, 1.45f);
