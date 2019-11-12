@@ -19,6 +19,8 @@ public class GameManager : MonoBehaviour{
     GameObject debugger;
     AudioSource audioSource;
     AudioClip successSound;
+    AudioClip winSound;
+    bool showedParticle = false;
 
     void Start(){
         debugger = GameObject.Find("Debugger");
@@ -28,34 +30,54 @@ public class GameManager : MonoBehaviour{
         gameHasStarted = false;
         audioSource = gameObject.GetComponent<AudioSource>();
         successSound = (AudioClip) Resources.Load("Sounds/success");
+        winSound = (AudioClip) Resources.Load("Sounds/win");
     }
 
     // Update is called once per frame
     void Update(){
+        isGameOver = isPuzzleSolved && (currentPuzzle == puzzleList.Length-1);
         if (gameHasStarted) {
-            checkForWinningCondition();
-            updateDebugger();
-            if (isPuzzleSolved){
-                consoleDisplay.SetText("Great Job!\n Press 'A' to try the next puzzle!");
-                if (OVRInput.GetDown(OVRInput.Button.One)){
-                    loadPuzzle();
-                }
-            } else {
-                consoleDisplay.SetText("Use the right thumbstick to rotate along the X and Y axis.\n\nUse the left thumbstick to rotate along the Z axis.");
-            }
+            checkForInputAfterGameStarts();
         } else {
-            if(OVRInput.GetDown(OVRInput.Button.One)){
-                loadPuzzle();
-                gameHasStarted = true;
-                consoleDisplay.SetText("Great Job!");
-            }
+           checkForInputBeforeGameStarts();
         }
-
-        if(OVRInput.GetDown(OVRInput.Button.Two)){
-              StartCoroutine(showWinningParticle());
-        }
-       
     }
+
+    void checkForInputAfterGameStarts() {
+        checkForWinningCondition();
+        updateDebugger();
+        if (isPuzzleSolved){
+           checkForStateAfterPuzzleSolved();
+        } else {
+            consoleDisplay.SetText("Use the right thumbstick to rotate along the X and Y axis.\n\nUse the left thumbstick to rotate along the Z axis.");
+        }
+    }
+
+    void checkForInputBeforeGameStarts() {
+         if(OVRInput.GetDown(OVRInput.Button.One)){
+            loadPuzzle();
+            gameHasStarted = true;
+        }
+    }
+
+    void checkForStateAfterPuzzleSolved(){
+        consoleDisplay.SetText("Great Job!\n Press 'A' to try the next puzzle!");
+        if (isGameOver){
+            consoleDisplay.SetText("Great Job! You successfully completed the test! Click 'A' to reset the game." );
+            if(!showedParticle) {StartCoroutine(displayWinningAnimation());}
+                stopAmbientMusic();
+                audioSource.volume = 0.045f;
+                audioSource.PlayOneShot(winSound);
+                if (OVRInput.GetDown(OVRInput.Button.One)){
+                    resetGame();
+                }
+        } else {
+            if (OVRInput.GetDown(OVRInput.Button.One)){
+                loadPuzzle();
+            }
+        } 
+    }
+
 
     void loadPuzzle(){
         Destroy(puzzleLeft);
@@ -112,19 +134,42 @@ public class GameManager : MonoBehaviour{
         return (compareTo >= floor && compareTo <= ceiling);
     }
 
-    IEnumerator showWinningParticle(){
-        particleWin();
-        yield return new WaitForSeconds(2);
-        particleWin();
-        yield return new WaitForSeconds(2);
-        particleWin();
+    IEnumerator displayWinningAnimation(){
+        showedParticle = true;
+        Destroy(puzzleLeft);
+        Destroy(puzzleRight);
+        for(int i = 0; i < 4; i++){
+            createParticleSystemAndPlay();
+            yield return new WaitForSeconds(2);
+        }
     }
 
-    void particleWin() {
+    void createParticleSystemAndPlay() {
         GameObject particleResource = Resources.Load("CFX_Firework_Trails_Gravity") as GameObject;
         GameObject particleObject = GameObject.Instantiate(particleResource, new Vector3(0.86f, 3.1f, 0.17f), transform.rotation);
         ParticleSystem particleSystem = particleObject.GetComponent<ParticleSystem>();
         particleSystem.Play();
+    }
+
+    void resetGame(){
+        isPuzzleSolved = false;
+        gameHasStarted = false;
+        showedParticle = false;
+        isGameOver = false;
+        currentPuzzle = 0;
+        consoleDisplay.SetText("Welcome!\nPress the 'A' button to get started wit the test.");
+        audioSource.volume = 0.08f;
+        playAmbientMusic();
+    }
+
+    void stopAmbientMusic(){
+        AudioSource speaker = GameObject.Find("Speaker").GetComponent<AudioSource>();
+        speaker.Pause();
+    }
+
+    void playAmbientMusic(){
+        AudioSource speaker = GameObject.Find("Speaker").GetComponent<AudioSource>();
+        speaker.Play();
     }
 
 }
