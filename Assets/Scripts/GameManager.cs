@@ -8,42 +8,53 @@ public class GameManager : MonoBehaviour{
     // Start is called before the first frame update
     public GameObject puzzleLeft;
     public GameObject puzzleRight;
+    public TextMeshPro consoleDisplay;
     public bool isGameOver;
-
+    public bool gameHasStarted;
     public bool isPuzzleSolved;
-
     string[] puzzleList = {"puzzle1","puzzle2","puzzle3","puzzle4","puzzle5", "puzzle6","puzzle7","puzzle8"}; 
     int currentPuzzle = 0;
     Vector3 originRight = new Vector3(1.05f, 2.75f, -2.27f);
     Vector3 originLeft= new Vector3(1.05f, 2.75f, 1.45f);
-
     GameObject debugger;
-
     AudioSource audioSource;
-
     AudioClip successSound;
 
-
     void Start(){
-        loadPuzzle();
         debugger = GameObject.Find("Debugger");
+        consoleDisplay = GameObject.Find("ConsoleDisplay").GetComponent<TextMeshPro>();;
         isGameOver = false;
         isPuzzleSolved = false;
+        gameHasStarted = false;
         audioSource = gameObject.GetComponent<AudioSource>();
-        successSound = (AudioClip) Resources.Load("Sounds/success");;
+        successSound = (AudioClip) Resources.Load("Sounds/success");
     }
 
     // Update is called once per frame
     void Update(){
-        updateDebugger();
-
-        checkForWinningCondition();
-        
-        if(OVRInput.GetDown(OVRInput.Button.One)){
-            loadPuzzle();
-        } else if (OVRInput.Get(OVRInput.Button.Two)){
-        //    Do something else
+        if (gameHasStarted) {
+            checkForWinningCondition();
+            updateDebugger();
+            if (isPuzzleSolved){
+                consoleDisplay.SetText("Great Job!\n Press 'A' to try the next puzzle!");
+                if (OVRInput.GetDown(OVRInput.Button.One)){
+                    loadPuzzle();
+                }
+            } else {
+                consoleDisplay.SetText("Use the right thumbstick to rotate along the X and Y axis.\n\nUse the left thumbstick to rotate along the Z axis.");
+            }
+        } else {
+            if(OVRInput.GetDown(OVRInput.Button.One)){
+                loadPuzzle();
+                gameHasStarted = true;
+                consoleDisplay.SetText("Great Job!");
+            }
         }
+
+        if(OVRInput.GetDown(OVRInput.Button.Two)){
+              StartCoroutine(showWinningParticle());
+        }
+       
     }
 
     void loadPuzzle(){
@@ -99,6 +110,21 @@ public class GameManager : MonoBehaviour{
         float floor = value - tolerance;
 
         return (compareTo >= floor && compareTo <= ceiling);
+    }
+
+    IEnumerator showWinningParticle(){
+        particleWin();
+        yield return new WaitForSeconds(2);
+        particleWin();
+        yield return new WaitForSeconds(2);
+        particleWin();
+    }
+
+    void particleWin() {
+        GameObject particleResource = Resources.Load("CFX_Firework_Trails_Gravity") as GameObject;
+        GameObject particleObject = GameObject.Instantiate(particleResource, new Vector3(0.86f, 3.1f, 0.17f), transform.rotation);
+        ParticleSystem particleSystem = particleObject.GetComponent<ParticleSystem>();
+        particleSystem.Play();
     }
 
 }

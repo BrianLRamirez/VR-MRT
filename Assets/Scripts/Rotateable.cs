@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Rotateable : MonoBehaviour {
+
+    public bool isZAllowed;
+    public bool isXAllowed;
+    public bool isYAllowed;
     
     float speed = 2f;
     void Update() {
