@@ -14,8 +14,8 @@ public class GameManager : MonoBehaviour{
     public bool isPuzzleSolved;
     string[] puzzleList = {"puzzle1","puzzle2","puzzle3","puzzle4","puzzle5", "puzzle6","puzzle7","puzzle8"}; 
     int currentPuzzle = 0;
-    Vector3 originRight = new Vector3(1.05f, 2.75f, -2.27f);
-    Vector3 originLeft= new Vector3(1.05f, 2.75f, 1.45f);
+    Vector3 originRight = new Vector3(1.05f, 2.75f, -1.97f);
+    Vector3 originLeft= new Vector3(1.05f, 2.75f, 1.88f);
     GameObject debugger;
     AudioSource audioSource;
     AudioClip successSound;
@@ -35,7 +35,7 @@ public class GameManager : MonoBehaviour{
 
     // Update is called once per frame
     void Update(){
-        isGameOver = isPuzzleSolved && (currentPuzzle == puzzleList.Length-1);
+        isGameOver = isPuzzleSolved && (currentPuzzle == puzzleList.Length);
         if (gameHasStarted) {
             checkForInputAfterGameStarts();
         } else {
@@ -63,14 +63,11 @@ public class GameManager : MonoBehaviour{
     void checkForStateAfterPuzzleSolved(){
         consoleDisplay.SetText("Great Job!\n Press 'A' to try the next puzzle!");
         if (isGameOver){
-            consoleDisplay.SetText("Great Job! You successfully completed the test! Click 'A' to reset the game." );
+            consoleDisplay.SetText("<b>CONGRATULATIONS!</b>\n\nYou successfully completed this VR experience. You may take off the headset now.\n\n <b>Thanks for playing!</b>");
             if(!showedParticle) {StartCoroutine(displayWinningAnimation());}
                 stopAmbientMusic();
-                audioSource.volume = 0.045f;
+                audioSource.volume = 0.5f;
                 audioSource.PlayOneShot(winSound);
-                if (OVRInput.GetDown(OVRInput.Button.One)){
-                    resetGame();
-                }
         } else {
             if (OVRInput.GetDown(OVRInput.Button.One)){
                 loadPuzzle();
@@ -85,26 +82,27 @@ public class GameManager : MonoBehaviour{
         isPuzzleSolved = false;
         GameObject puzzleModel = Resources.Load(puzzleList[currentPuzzle]) as GameObject;
         puzzleLeft =  GameObject.Instantiate(puzzleModel, originLeft, transform.rotation);
-        puzzleLeft.transform.Rotate(Random.Range(0f, 360.0f), Random.Range(0f, 360.0f), 0);
+        puzzleLeft.transform.Rotate(Random.Range(45f, 270f), Random.Range(45f, 270.0f), 0);
         puzzleRight =  GameObject.Instantiate(puzzleModel, originRight, transform.rotation);
         puzzleRight.AddComponent<Rotateable>();
         currentPuzzle++;
     }
 
     void updateDebugger(){
-        bool xMatches = isWithinTolerance(puzzleLeft.transform.rotation.x, puzzleRight.transform.rotation.x, 0.06f);
-        bool yMatches = isWithinTolerance(puzzleLeft.transform.rotation.y, puzzleRight.transform.rotation.y, 0.06f);
-        bool zMatches = isWithinTolerance(puzzleLeft.transform.rotation.z, puzzleRight.transform.rotation.z, 0.07f);
+        bool xMatches = isWithinTolerance(puzzleLeft.transform.localEulerAngles.x, puzzleRight.transform.localEulerAngles.x);
+        bool yMatches = isWithinTolerance(puzzleLeft.transform.localEulerAngles.y, puzzleRight.transform.localEulerAngles.y);
+        bool zMatches = isWithinTolerance(puzzleLeft.transform.localEulerAngles.z, puzzleRight.transform.localEulerAngles.z);
+
 
         TextMeshPro debuggerText = GameObject.Find("DebuggerText").GetComponent<TextMeshPro>();;
         string debugText = "Puzzle Left: \n" + 
-                            "<#00ff00>X: " + puzzleLeft.transform.rotation.x + "</color>\n" + 
-                            "<#3498db>Y: " + puzzleLeft.transform.rotation.y + "</color>\n" +
-                            "<#ff46a5>Z: " + puzzleLeft.transform.rotation.z + "</color>\n" +
+                            "<#00ff00>X: " + puzzleLeft.transform.rotation.x + "(" + puzzleLeft.transform.localEulerAngles.x + ")" + "</color>\n" + 
+                            "<#3498db>Y: " + puzzleLeft.transform.rotation.y + "(" + puzzleLeft.transform.localEulerAngles.y + ")" + "</color>\n" +
+                            "<#ff46a5>Z: " + puzzleLeft.transform.rotation.z + "(" + puzzleLeft.transform.localEulerAngles.z + ")" + "</color>\n" +
                             "Puzzle Right: \n" + 
-                            "<#00ff00>X: " + puzzleRight.transform.rotation.x + "</color>\n" + 
-                            "<#3498db>Y: " + puzzleRight.transform.rotation.y + "</color>\n" +
-                            "<#ff46a5>Z: " + puzzleRight.transform.rotation.z + "</color>\n" +
+                            "<#00ff00>X: " + puzzleRight.transform.rotation.x + "(" + puzzleRight.transform.localEulerAngles.x + ")" + "</color>\n" + 
+                            "<#3498db>Y: " + puzzleRight.transform.rotation.y + "(" + puzzleRight.transform.localEulerAngles.y + ")" + "</color>\n" +
+                            "<#ff46a5>Z: " + puzzleRight.transform.rotation.z + "(" + puzzleRight.transform.localEulerAngles.z + ")" + "</color>\n" +
                             "<#00ff00>X Matches: " + xMatches + "</color>\n" +
                             "<#3498db>Y Matches: " + yMatches + "</color>\n" +
                             "<#ff46a5>Z Matches: " + zMatches + "</color>\n";
@@ -112,9 +110,9 @@ public class GameManager : MonoBehaviour{
     }
 
     void checkForWinningCondition(){
-        bool xMatches = isWithinTolerance(puzzleLeft.transform.rotation.x, puzzleRight.transform.rotation.x, 0.06f);
-        bool yMatches = isWithinTolerance(puzzleLeft.transform.rotation.y, puzzleRight.transform.rotation.y, 0.06f);
-        bool zMatches = isWithinTolerance(puzzleLeft.transform.rotation.z, puzzleRight.transform.rotation.z, 0.07f);
+        bool xMatches = isWithinTolerance(puzzleLeft.transform.localEulerAngles.x, puzzleRight.transform.localEulerAngles.x);
+        bool yMatches = isWithinTolerance(puzzleLeft.transform.localEulerAngles.y, puzzleRight.transform.localEulerAngles.y);
+        bool zMatches = isWithinTolerance(puzzleLeft.transform.localEulerAngles.z, puzzleRight.transform.localEulerAngles.z);
 
         if(xMatches && yMatches && zMatches) {
             if(!isPuzzleSolved){
@@ -125,9 +123,8 @@ public class GameManager : MonoBehaviour{
         }
     }
 
-    bool isWithinTolerance(float value, float compareTo, float tolerance){
-        value = Mathf.Abs(value);
-        compareTo = Mathf.Abs(compareTo);
+    bool isWithinTolerance(float value, float compareTo){
+        float tolerance = 10f;
         float ceiling = value + tolerance;
         float floor = value - tolerance;
 
@@ -138,7 +135,7 @@ public class GameManager : MonoBehaviour{
         showedParticle = true;
         Destroy(puzzleLeft);
         Destroy(puzzleRight);
-        for(int i = 0; i < 4; i++){
+        for(int i = 0; i < 5; i++){
             createParticleSystemAndPlay();
             yield return new WaitForSeconds(2);
         }
@@ -151,25 +148,9 @@ public class GameManager : MonoBehaviour{
         particleSystem.Play();
     }
 
-    void resetGame(){
-        isPuzzleSolved = false;
-        gameHasStarted = false;
-        showedParticle = false;
-        isGameOver = false;
-        currentPuzzle = 0;
-        consoleDisplay.SetText("Welcome!\nPress the 'A' button to get started wit the test.");
-        audioSource.volume = 0.08f;
-        playAmbientMusic();
-    }
-
     void stopAmbientMusic(){
         AudioSource speaker = GameObject.Find("Speaker").GetComponent<AudioSource>();
         speaker.Pause();
-    }
-
-    void playAmbientMusic(){
-        AudioSource speaker = GameObject.Find("Speaker").GetComponent<AudioSource>();
-        speaker.Play();
     }
 
 }

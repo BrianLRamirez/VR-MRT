@@ -8,7 +8,7 @@ public class Rotateable : MonoBehaviour {
     public bool isXAllowed;
     public bool isYAllowed;
     
-    float speed = 2f;
+    float speed = 1.25f;
     void Update() {
         bool isThumbstickUp = OVRInput.Get(OVRInput.Button.SecondaryThumbstickUp);
         bool isThumbstickDown = OVRInput.Get(OVRInput.Button.SecondaryThumbstickDown);
