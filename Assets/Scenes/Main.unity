@@ -298,7 +298,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 49690805}
   m_LocalRotation: {x: 0.0021740794, y: 0.7071035, z: -0.7071035, w: -0.0021740794}
-  m_LocalPosition: {x: 0, y: 0, z: 5.82}
+  m_LocalPosition: {x: 0, y: 0, z: 5.94}
   m_LocalScale: {x: 4.3041563, y: 3.4844782, z: 5.8104753}
   m_Children: []
   m_Father: {fileID: 1425788903}
@@ -329,7 +329,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_text: Debugger Text
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 715b80e429c437e40867928a4e1fc975, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 715b80e429c437e40867928a4e1fc975, type: 2}
@@ -397,13 +397,13 @@ MonoBehaviour:
   m_margin: {x: 8.348548, y: -0.2799363, z: 9.449978, w: 2.846354}
   m_textInfo:
     textComponent: {fileID: 49690807}
-    characterCount: 13
+    characterCount: 0
     spriteCount: 0
-    spaceCount: 1
-    wordCount: 2
+    spaceCount: 0
+    wordCount: 0
     linkCount: 0
-    lineCount: 1
-    pageCount: 1
+    lineCount: 0
+    pageCount: 0
     materialCount: 1
   m_havePropertiesChanged: 0
   m_isUsingLegacyAnimationComponent: 0
@@ -2586,7 +2586,9 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_text: Debugger
+  m_text: 'Score Time Table
+
+'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 715b80e429c437e40867928a4e1fc975, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 715b80e429c437e40867928a4e1fc975, type: 2}
@@ -2654,10 +2656,10 @@ MonoBehaviour:
   m_margin: {x: 8.348548, y: -0.2799363, z: 9.449978, w: 5.1090817}
   m_textInfo:
     textComponent: {fileID: 766828670}
-    characterCount: 8
+    characterCount: 17
     spriteCount: 0
-    spaceCount: 0
-    wordCount: 1
+    spaceCount: 3
+    wordCount: 3
     linkCount: 0
     lineCount: 1
     pageCount: 1
@@ -2741,7 +2743,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 766828669}
   m_LocalRotation: {x: 0.0021740794, y: 0.7071035, z: -0.7071035, w: -0.0021740794}
-  m_LocalPosition: {x: 0, y: 0, z: 4.29}
+  m_LocalPosition: {x: 0, y: 0, z: 4.46}
   m_LocalScale: {x: 4.3041563, y: 3.292056, z: 5.8104753}
   m_Children: []
   m_Father: {fileID: 1425788903}
@@ -4088,15 +4090,15 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1425788899}
-  m_LocalRotation: {x: 0.2519235, y: -0.6607076, z: 0.6607076, w: 0.25192356}
-  m_LocalPosition: {x: -2.28, y: 1.961, z: 3.64}
+  m_LocalRotation: {x: -0.5, y: -0.5, z: 0.5, w: -0.5}
+  m_LocalPosition: {x: -6.65, y: 2.32, z: 0.37}
   m_LocalScale: {x: 0.15238038, y: 0.11287436, z: 0.21855627}
   m_Children:
   - {fileID: 766828674}
   - {fileID: 49690806}
   m_Father: {fileID: 0}
   m_RootOrder: 4
-  m_LocalEulerAnglesHint: {x: 90, y: -180, z: -41.74298}
+  m_LocalEulerAnglesHint: {x: 90, y: -180, z: 90}
 --- !u!1 &1428568593
 GameObject:
   m_ObjectHideFlags: 0
