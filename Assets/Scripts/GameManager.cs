@@ -14,11 +14,12 @@ public class GameManager : MonoBehaviour{
     public bool isPuzzleSolved;
     string[] puzzleList = {"puzzle1","puzzle2","puzzle3","puzzle4","puzzle5", "puzzle6","puzzle7","puzzle8"}; 
     int currentPuzzle = 0;
-    Vector3 originRight = new Vector3(1.05f, 2.75f, -1.97f);
-    Vector3 originLeft= new Vector3(1.05f, 2.75f, 1.88f);
+    Vector3 originRight = new Vector3(1.05f, 2.75f, -1.60f);
+    Vector3 originLeft= new Vector3(1.05f, 2.75f, 1.25f);
     GameObject debugger;
     AudioSource audioSource;
     AudioClip successSound;
+    AudioClip failureSound;
     AudioClip winSound;
     bool showedParticle = false;
     float timer = 0f;
@@ -33,6 +34,7 @@ public class GameManager : MonoBehaviour{
         gameHasStarted = false;
         audioSource = gameObject.GetComponent<AudioSource>();
         successSound = (AudioClip) Resources.Load("Sounds/success");
+        failureSound = (AudioClip) Resources.Load("Sounds/failure");
         winSound = (AudioClip) Resources.Load("Sounds/win");
         puzzleSolvedTimes = new float[puzzleList.Length];
     }
@@ -49,15 +51,15 @@ public class GameManager : MonoBehaviour{
     }
 
     void checkForInputAfterGameStarts() {
-        checkForWinningCondition();
+        if (OVRInput.GetDown(OVRInput.Button.Two)){
+             checkForWinningCondition(); //Only when button down!
+        }
         updateDebugger();
         if (isPuzzleSolved){
             timerEnabled = false;
             savePuzzledSolveTime();
             checkForStateAfterPuzzleSolved();
-        } else {
-            consoleDisplay.SetText("Use the right thumbstick to rotate along the X and Y axis.\n\nUse the left thumbstick to rotate along the Z axis.");
-        }
+        } 
     }
 
     void checkForInputBeforeGameStarts() {
@@ -68,7 +70,7 @@ public class GameManager : MonoBehaviour{
     }
 
     void checkForStateAfterPuzzleSolved(){
-        consoleDisplay.SetText("Great Job!\n Press 'A' to try the next puzzle!");
+        consoleDisplay.SetText("<#2ecc71>Great Job!</color>\n Press the <#3498db>'A'</color> button to try the next puzzle!");
         if (isGameOver){
             consoleDisplay.SetText("<b>CONGRATULATIONS!</b>\n\nYou successfully completed this VR experience. You may take off the headset now.\n\n <b>Thanks for playing!</b>");
             if(!showedParticle) {StartCoroutine(displayWinningAnimation());}
@@ -84,6 +86,7 @@ public class GameManager : MonoBehaviour{
 
 
     void loadPuzzle(){
+        float sizeScale = 0.8f;
         Destroy(puzzleLeft);
         Destroy(puzzleRight);
         isPuzzleSolved = false;
@@ -92,7 +95,10 @@ public class GameManager : MonoBehaviour{
         puzzleLeft.transform.Rotate(Random.Range(45f, 270f), Random.Range(45f, 270.0f), 0);
         puzzleRight =  GameObject.Instantiate(puzzleModel, originRight, transform.rotation);
         puzzleRight.AddComponent<Rotateable>();
+        puzzleLeft.transform.localScale = new Vector3(sizeScale, sizeScale, sizeScale);
+        puzzleRight.transform.localScale = new Vector3(sizeScale, sizeScale, sizeScale);
         currentPuzzle++;
+        consoleDisplay.SetText("Use the right thumbstick to rotate along the X and Y axis.\n\nUse the left thumbstick to rotate along the Z axis.\n\nPress the <#3498db>'B'</color> button to check your solution!");
         startTimer();
     }
 
@@ -105,7 +111,7 @@ public class GameManager : MonoBehaviour{
         TextMeshPro debuggerText = GameObject.Find("DebuggerText").GetComponent<TextMeshPro>();;
         string debugText = "";
         for(int i =0; i < puzzleSolvedTimes.Length; i++){
-            debugText += ("Puzzle " + (i+1) + ": " + puzzleSolvedTimes[i] + " seconds\n");
+            debugText += ("Puzzle " + (i+1) + ": " + ((int)puzzleSolvedTimes[i]) + " seconds\n");
         }
         // string debugText = "Puzzle Left: \n" + 
         //                     "<#00ff00>X: " + puzzleLeft.transform.rotation.x + "(" + puzzleLeft.transform.localEulerAngles.x + ")" + "</color>\n" + 
@@ -122,6 +128,7 @@ public class GameManager : MonoBehaviour{
     }
 
     void checkForWinningCondition(){
+        Debug.Log("Checking for winning condition ---------------------------------------");
         bool xMatches = isWithinTolerance(puzzleLeft.transform.localEulerAngles.x, puzzleRight.transform.localEulerAngles.x);
         bool yMatches = isWithinTolerance(puzzleLeft.transform.localEulerAngles.y, puzzleRight.transform.localEulerAngles.y);
         bool zMatches = isWithinTolerance(puzzleLeft.transform.localEulerAngles.z, puzzleRight.transform.localEulerAngles.z);
@@ -132,11 +139,15 @@ public class GameManager : MonoBehaviour{
             }
             isPuzzleSolved = true;
             Destroy(puzzleRight.GetComponent<Rotateable>());
+        } else {
+            Debug.Log("Win condition false! Playing sad sound! ---------------------------------------");
+            consoleDisplay.SetText("<#e74c3c>Wrong!</color>\nIt seems like your rotation is off. Rotate the object and press the <#3498db>'B'</color> button to try again!");
+            audioSource.PlayOneShot(failureSound);
         }
     }
 
     bool isWithinTolerance(float value, float compareTo){
-        float tolerance = 10f;
+        float tolerance = 55;
         float ceiling = value + tolerance;
         float floor = value - tolerance;
 
